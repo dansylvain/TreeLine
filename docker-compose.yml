@@ -1,0 +1,79 @@
+# version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15
+    container_name: treeline_postgres
+    environment:
+      POSTGRES_DB: treeline
+      POSTGRES_USER: treeline_user
+      POSTGRES_PASSWORD: treeline_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      # - ./config/docker/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U treeline_user -d treeline"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: treeline_backend
+    environment:
+      - DATABASE_URL=postgresql://treeline_user:treeline_password@postgres:5432/treeline
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/app
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  ai-agent:
+    build:
+      context: ./ai_agent
+      dockerfile: Dockerfile
+    container_name: treeline_ai_agent
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - DATABASE_URL=postgresql://treeline_user:treeline_password@postgres:5432/treeline
+    volumes:
+      - ./ai_agent:/app
+      - chromadb_data:/app/data/vector_db
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  streamlit-ui:
+    build:
+      context: ./ui
+      dockerfile: Dockerfile
+    container_name: treeline_ui
+    environment:
+      - BACKEND_URL=http://backend:8000
+    ports:
+      - "8501:8501"
+    volumes:
+      - ./ui:/app
+    depends_on:
+      backend:
+        condition: service_healthy
+
+volumes:
+  postgres_data:
+  chromadb_data:
+
+networks:
+  default:
+    name: treeline_network
