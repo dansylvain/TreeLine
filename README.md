@@ -134,8 +134,14 @@ The `dev.sh` script provides convenient commands for development:
 # Restart all services
 ./dev.sh restart
 
+# Check service status and health
+./dev.sh status
+
 # View logs
-./dev.sh logs
+./dev.sh logs [service_name]
+
+# Open services in browser
+./dev.sh open
 
 # Run tests
 ./dev.sh test
@@ -143,11 +149,11 @@ The `dev.sh` script provides convenient commands for development:
 # Format code
 ./dev.sh format
 
-# Lint code
-./dev.sh lint
-
 # Clean up (remove containers and volumes)
 ./dev.sh clean
+
+# Show help
+./dev.sh help
 ```
 
 ### Adding Knowledge Base Documents
@@ -297,9 +303,16 @@ docker-compose -f docker-compose.prod.yml up -d
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
+## 📚 Documentation
+
+- **[API Endpoints](docs/api-endpoints.md)**: Comprehensive API documentation with examples
+- **[Development Guide](docs/development-guide.md)**: Best practices, coding standards, and workflow
+- **[Code Review Observations](docs/code-review-observations.md)**: Code quality analysis and future improvements
+- **[Database Initialization](docs/database-initialization.md)**: Database setup and schema information
+
 ## 🆘 Support
 
-- **Documentation**: Check this README and inline code comments
+- **Documentation**: Check this README and the docs/ directory
 - **Issues**: Open an issue on GitHub
 - **Discussions**: Use GitHub Discussions for questions
 

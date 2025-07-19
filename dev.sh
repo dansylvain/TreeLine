@@ -127,6 +127,87 @@ show_logs() {
     fi
 }
 
+# Function to show service status
+show_status() {
+    print_status "Checking service status..."
+    echo
+    docker-compose ps
+    echo
+    
+    # Check individual service health
+    print_status "Health checks:"
+    
+    # Backend health
+    if curl -f http://localhost:8000/health >/dev/null 2>&1; then
+        print_success "✓ Backend (http://localhost:8000) - Healthy"
+    else
+        print_warning "✗ Backend (http://localhost:8000) - Not responding"
+    fi
+    
+    # AI Agent health
+    if curl -f http://localhost:8001/health >/dev/null 2>&1; then
+        print_success "✓ AI Agent (http://localhost:8001) - Healthy"
+    else
+        print_warning "✗ AI Agent (http://localhost:8001) - Not responding"
+    fi
+    
+    # Streamlit UI
+    if curl -f http://localhost:8501 >/dev/null 2>&1; then
+        print_success "✓ Streamlit UI (http://localhost:8501) - Healthy"
+    else
+        print_warning "✗ Streamlit UI (http://localhost:8501) - Not responding"
+    fi
+    
+    # Database
+    if docker-compose exec -T postgres pg_isready -U treeline_user -d treeline >/dev/null 2>&1; then
+        print_success "✓ PostgreSQL Database - Healthy"
+    else
+        print_warning "✗ PostgreSQL Database - Not responding"
+    fi
+}
+
+# Function to open services in browser
+open_services() {
+    print_status "Opening TreeLine services in browser..."
+    
+    # Check if services are running first
+    if ! curl -f http://localhost:8501 >/dev/null 2>&1; then
+        print_warning "Services don't appear to be running. Starting them first..."
+        start_services
+        sleep 5
+    fi
+    
+    # Open in browser (works on most Linux systems)
+    if command_exists xdg-open; then
+        xdg-open http://localhost:8501 >/dev/null 2>&1 &
+        xdg-open http://localhost:8000/docs >/dev/null 2>&1 &
+        print_success "Opened Streamlit UI and API docs in browser"
+    elif command_exists open; then
+        open http://localhost:8501 >/dev/null 2>&1 &
+        open http://localhost:8000/docs >/dev/null 2>&1 &
+        print_success "Opened Streamlit UI and API docs in browser"
+    else
+        print_status "Manual browser access:"
+        echo "  🌐 Streamlit UI: http://localhost:8501"
+        echo "  📚 API Docs: http://localhost:8000/docs"
+    fi
+}
+
+# Function to clean up everything
+clean_all() {
+    print_warning "This will remove all containers, volumes, and images for TreeLine"
+    read -p "Are you sure? (y/N): " -n 1 -r
+    echo
+    if [[ $REPLY =~ ^[Yy]$ ]]; then
+        print_status "Cleaning up TreeLine resources..."
+        docker-compose down -v --remove-orphans
+        docker system prune -f
+        print_success "Cleanup completed"
+    else
+        print_status "Cleanup cancelled"
+    fi
+}
+
 # Function to run tests
 run_tests() {
     print_status "Running tests..."
@@ -194,6 +275,15 @@ case "${1:-start}" in
     format)
         format_code
         ;;
+    status)
+        show_status
+        ;;
+    open)
+        open_services
+        ;;
+    clean)
+        clean_all
+        ;;
     help|--help|-h)
         echo "TreeLine Development Script"
         echo
@@ -203,13 +293,22 @@ case "${1:-start}" in
         echo "  start     Start all services (default)"
         echo "  stop      Stop all services"
         echo "  restart   Restart all services"
+        echo "  status    Show service status and health checks"
         echo "  logs      Show logs for all services"
         echo "  logs [service]  Show logs for specific service"
+        echo "  open      Open services in browser"
         echo "  test      Run tests"
         echo "  format    Format code with black and ruff"
+        echo "  clean     Clean up all containers and volumes"
         echo "  help      Show this help message"
         echo
         echo "Services: postgres, backend, ai-agent, streamlit-ui"
+        echo
+        echo "Examples:"
+        echo "  $0 start          # Start all services"
+        echo "  $0 logs backend   # Show backend logs"
+        echo "  $0 status         # Check service health"
+        echo "  $0 open           # Open UI and docs in browser"
         ;;
     *)
         print_error "Unknown command: $1"
