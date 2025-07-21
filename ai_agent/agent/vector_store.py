@@ -39,11 +39,16 @@ class VectorStoreManager:
         )
         
         # Initialize ChromaDB client
+
         self.client = chromadb.PersistentClient(
             path=str(self.persist_directory),
             settings=Settings(
                 anonymized_telemetry=False,
-                allow_reset=True
+                allow_reset=True,
+                is_persistent=True,
+                chroma_api_impl="chromadb.api.fastapi.FastAPI",
+                chroma_server_host="http://chroma-server:8000",
+                chroma_server_http_port=8000
             )
         )
         
@@ -54,7 +59,8 @@ class VectorStoreManager:
             embedding_function=self.embeddings,
             persist_directory=str(self.persist_directory)
         )
-        
+        logger.info(f"[DEBUG] Persist directory resolved to: {self.persist_directory}")
+
         # Text splitter for document processing
         self.text_splitter = RecursiveCharacterTextSplitter(
             chunk_size=1000,
@@ -83,12 +89,12 @@ class VectorStoreManager:
 
         # Add to vector store
         ids = self.vector_store.add_documents(split_docs)
+        self.vector_store.persist()
 
         # ************** LOGS **************
         # ************** LOGS **************
         # ************** LOGS **************
         logger.info(f"[VECTOR_DB] Added {len(ids)} embedded chunks to collection '{self.collection_name}'")
-        
         # Inspecte les embeddings générés (attention, ça peut être long)
         sample_text = split_docs[0].page_content if split_docs else None
         if sample_text:
@@ -199,6 +205,8 @@ class VectorStoreManager:
         # ************** LOGS **************
         # ************** LOGS **************
         # ************** LOGS **************
+
+
 
 
         if documents:

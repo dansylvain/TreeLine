@@ -50,7 +50,7 @@ services:
       - DATABASE_URL=postgresql://treeline_user:treeline_password@postgres:5432/treeline
     volumes:
       - ./ai_agent:/app
-      - chromadb_data:/app/data/vector_db
+      - ./ai_agent/data/vector_db:/app/data/vector_db
     depends_on:
       postgres:
         condition: service_healthy
@@ -69,6 +69,22 @@ services:
     depends_on:
       backend:
         condition: service_healthy
+
+
+  chroma-server:
+    image: chromadb/chroma:latest
+    container_name: treeline_chroma_server
+    ports:
+      - "8001:8000"   # expose port 8000 du container sur 8001 local
+    volumes:
+      - ./ai_agent/data/vector_db:/data
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8000/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+
 
 volumes:
   postgres_data:
