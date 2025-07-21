@@ -11,6 +11,10 @@ from langchain_openai import OpenAIEmbeddings
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.schema import Document
 
+from agent.logger import TreeLineLogger
+
+logger = TreeLineLogger().logger
+
 
 class VectorStoreManager:
     """Manages ChromaDB vector store for RAG pipeline."""
@@ -67,9 +71,34 @@ class VectorStoreManager:
         # Split documents into chunks
         split_docs = self.text_splitter.split_documents(documents)
         
+        # ************** LOGS **************
+        # ************** LOGS **************
+        # ************** LOGS **************
+        logger.info(f"[SPLIT] Split into {len(split_docs)} chunks")
+        if split_docs:
+            logger.info(f"[SPLIT] First chunk preview:\n{split_docs[0].page_content[:300]}")
+        # ************** LOGS **************
+        # ************** LOGS **************
+        # ************** LOGS **************
+
         # Add to vector store
         ids = self.vector_store.add_documents(split_docs)
+
+        # ************** LOGS **************
+        # ************** LOGS **************
+        # ************** LOGS **************
+        logger.info(f"[VECTOR_DB] Added {len(ids)} embedded chunks to collection '{self.collection_name}'")
         
+        # Inspecte les embeddings générés (attention, ça peut être long)
+        sample_text = split_docs[0].page_content if split_docs else None
+        if sample_text:
+            sample_embedding = self.embeddings.embed_query(sample_text)
+            logger.info(f"[EMBED] Sample embedding (first 10 floats): {sample_embedding[:10]}")
+            logger.info(f"[EMBED] Length of embedding: {len(sample_embedding)} dimensions")
+
+        # ************** LOGS **************
+        # ************** LOGS **************
+        # ************** LOGS **************
         return ids
     
     def add_texts(self, texts: List[str], metadatas: Optional[List[dict]] = None) -> List[str]:
@@ -161,6 +190,17 @@ class VectorStoreManager:
                 except Exception as e:
                     print(f"Error loading {file_path}: {e}")
         
+        # ************** LOGS **************
+        # ************** LOGS **************
+        # ************** LOGS **************
+        logger.info(f"[LOAD] Loaded {len(documents)} documents from {directory_path}")
+        if documents:
+            logger.info(f"[LOAD] First document preview:\n{documents[0].page_content[:300]}")
+        # ************** LOGS **************
+        # ************** LOGS **************
+        # ************** LOGS **************
+
+
         if documents:
             self.add_documents(documents)
         
