@@ -51,6 +51,7 @@ services:
     volumes:
       - ./ai_agent:/app
       - ./ai_agent/data/vector_db:/app/data/vector_db
+      - ./logs:/app/logs
     depends_on:
       postgres:
         condition: service_healthy

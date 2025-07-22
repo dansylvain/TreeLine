@@ -178,7 +178,7 @@ Thumbs.db
 ai_agent/data/vector_db/
 # Logs
 *.log
-logs/
+logs/*
 
 # Temporary files
 tmp/
