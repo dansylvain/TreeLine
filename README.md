@@ -310,6 +310,10 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - **[Code Review Observations](docs/code-review-observations.md)**: Code quality analysis and future improvements
 - **[Database Initialization](docs/database-initialization.md)**: Database setup and schema information
 
+## 🌐 External Documentation
+
+- **[CHROMA DOCUMENTATION](https://docs.trychroma.com/docs/overview/introduction)**
+
 ## 🆘 Support
 
 - **Documentation**: Check this README and the docs/ directory
