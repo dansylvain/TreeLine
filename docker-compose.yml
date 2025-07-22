@@ -52,6 +52,8 @@ services:
       - ./ai_agent:/app
       - ./ai_agent/data/vector_db:/app/data/vector_db
       - ./logs:/app/logs
+    env_file:
+      - .env
     depends_on:
       postgres:
         condition: service_healthy

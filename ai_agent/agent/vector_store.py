@@ -8,6 +8,7 @@ import chromadb
 from chromadb.config import Settings
 from langchain_community.vectorstores import Chroma
 from langchain_openai import OpenAIEmbeddings
+from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.schema import Document
 
@@ -33,10 +34,23 @@ class VectorStoreManager:
         self.persist_directory.mkdir(parents=True, exist_ok=True)
         
         # Initialize embeddings
-        self.embeddings = OpenAIEmbeddings(
-            model=embedding_model,
-            openai_api_key=os.getenv("OPENAI_API_KEY")
-        )
+        embedding_provider = os.getenv("EMBEDDING_PROVIDER", "openai")
+
+        if embedding_provider == "local":
+            local_model = os.getenv("LOCAL_EMBEDDING_MODEL", "all-MiniLM-L6-v2")
+            self.embeddings = HuggingFaceEmbeddings(model_name=local_model)
+            # self.embeddings =  HuggingFaceEmbeddings(model_name="mxbai/Embed-Large-V1", model_kwargs={"device": "cpu"})
+            logger.info(f"[EMBEDDINGS] Using local embedding model: {local_model}")
+        else:
+            self.embeddings = OpenAIEmbeddings(
+                model=embedding_model,
+                openai_api_key=os.getenv("OPENAI_API_KEY")
+            )
+            logger.info(f"[EMBEDDINGS] Using OpenAI embedding model: {embedding_model}")
+
+
+        
+
         
         # Initialize ChromaDB client
 
