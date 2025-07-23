@@ -69,6 +69,7 @@ services:
       - "8501:8501"
     volumes:
       - ./ui:/app
+      - ./ai_agent/data/knowledge_base:/app/ai_agent/data/knowledge_base
     depends_on:
       backend:
         condition: service_healthy

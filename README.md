@@ -80,16 +80,13 @@ This will:
 - **API Documentation**: http://localhost:8000/docs
 - **AI Agent Service**: http://localhost:8001
 
-### 5. Admin Interface (Optional)
+### 5. Admin Interface
 
-To manage the knowledge base documents, you can run the admin interface:
+The admin interface is integrated into the main Streamlit UI. Access it by:
 
-```bash
-./run_admin.sh
-```
-
-- **Admin Interface**: http://localhost:8502
-- **Default Credentials**: Username: `admin`, Password: `admin123`
+1. Navigate to http://localhost:8501
+2. Click "🔧 Admin Panel" in the sidebar
+3. Login with default credentials: Username: `admin`, Password: `admin123`
 
 ## 🔧 Admin Interface
 
@@ -129,21 +126,17 @@ The TreeLine Admin Interface provides a web-based management system for the know
 
 ### 🚀 Getting Started with Admin Interface
 
-1. **Start the Admin Interface**:
-   ```bash
-   ./run_admin.sh
-   ```
-
-2. **Access the Interface**:
-   - Open http://localhost:8502 in your browser
+1. **Access the Interface**:
+   - Navigate to http://localhost:8501 (main Streamlit UI)
+   - Click "🔧 Admin Panel" in the sidebar navigation
    - Login with default credentials (admin/admin123)
 
-3. **Manage Documents**:
+2. **Manage Documents**:
    - Upload new documents using the file uploader
    - View existing documents in the main panel
    - Delete unwanted documents with the delete buttons
 
-4. **Configure Settings**:
+3. **Configure Settings**:
    - Select your preferred embedding model from the sidebar
    - View knowledge base statistics
 
@@ -158,10 +151,10 @@ For production use, consider:
 
 ### 📝 Notes
 
-- The admin interface operates independently of the main TreeLine application
+- The admin interface is integrated into the main Streamlit UI
 - After uploading or deleting files, the AI agent will need to be restarted to reload the knowledge base
 - Vector store updates are handled separately by the AI agent service
-- The interface runs on port 8502 to avoid conflicts with the main Streamlit UI (port 8501)
+- All functionality is accessible through the single UI on port 8501
 
 ## 📁 Project Structure
 
@@ -243,11 +236,8 @@ The `dev.sh` script provides convenient commands for development:
 
 #### Method 1: Using the Admin Interface (Recommended)
 
-1. Start the admin interface:
-   ```bash
-   ./run_admin.sh
-   ```
-2. Open http://localhost:8502 in your browser
+1. Navigate to http://localhost:8501 (main Streamlit UI)
+2. Click "🔧 Admin Panel" in the sidebar navigation
 3. Login with default credentials (username: `admin`, password: `admin123`)
 4. Use the file upload feature to add new documents
 5. Delete unwanted documents using the delete buttons
