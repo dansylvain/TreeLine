@@ -7,6 +7,10 @@ from dotenv import load_dotenv
 from .rag_pipeline import RAGPipeline
 from .vector_store import VectorStoreManager
 
+from agent.logger import TreeLineLogger
+
+logger = TreeLineLogger().logger
+
 # Load environment variables
 load_dotenv()
 
@@ -187,5 +191,7 @@ if __name__ == "__main__":
         """Health check endpoint."""
         return {"status": "healthy", "service": "treeline-ai-agent"}
     
+    agent = get_agent()
+
     # Run the standalone service
     uvicorn.run(app, host="0.0.0.0", port=8001)
