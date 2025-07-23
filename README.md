@@ -80,6 +80,89 @@ This will:
 - **API Documentation**: http://localhost:8000/docs
 - **AI Agent Service**: http://localhost:8001
 
+### 5. Admin Interface (Optional)
+
+To manage the knowledge base documents, you can run the admin interface:
+
+```bash
+./run_admin.sh
+```
+
+- **Admin Interface**: http://localhost:8502
+- **Default Credentials**: Username: `admin`, Password: `admin123`
+
+## 🔧 Admin Interface
+
+The TreeLine Admin Interface provides a web-based management system for the knowledge base documents. It's built with Streamlit and offers the following features:
+
+### 🔐 Authentication
+- Simple login form with configurable credentials
+- Session-based authentication using `st.session_state`
+- Credentials can be set via environment variables (`ADMIN_USERNAME`, `ADMIN_PASSWORD`)
+
+### 📄 Document Management
+- **View All Documents**: Lists all files in the `ai_agent/data/knowledge_base/` directory
+- **File Information**: Shows file name, size, and other metadata
+- **Delete Documents**: Remove unwanted files with a single click
+- **File Statistics**: View total number of files and combined size
+
+### ⬆️ File Upload
+- **Multi-file Upload**: Upload multiple documents simultaneously
+- **Supported Formats**: Markdown (.md), Text (.txt), PDF (.pdf), Word (.docx, .doc)
+- **Automatic Saving**: Files are automatically saved to the knowledge base directory
+- **Upload Feedback**: Success/error messages for each upload operation
+
+### 🧠 Embedding Model Configuration
+- **Model Selection**: Choose from various embedding models:
+  - OpenAI models: `text-embedding-ada-002`, `text-embedding-3-small`, `text-embedding-3-large`
+  - HuggingFace models: `all-MiniLM-L6-v2`, `all-mpnet-base-v2`
+  - Custom models: `sentence-transformers/all-MiniLM-L6-v2`
+- **Session Storage**: Selected model is stored in session state for future configuration
+- **Real-time Updates**: Model selection is immediately reflected in the interface
+
+### 🎨 User Interface Features
+- **Clean Design**: Professional admin interface with intuitive navigation
+- **Responsive Layout**: Works well on different screen sizes
+- **Status Messages**: Clear success, error, and warning notifications
+- **Statistics Dashboard**: Overview of knowledge base metrics
+- **Sidebar Navigation**: Easy access to admin controls and information
+
+### 🚀 Getting Started with Admin Interface
+
+1. **Start the Admin Interface**:
+   ```bash
+   ./run_admin.sh
+   ```
+
+2. **Access the Interface**:
+   - Open http://localhost:8502 in your browser
+   - Login with default credentials (admin/admin123)
+
+3. **Manage Documents**:
+   - Upload new documents using the file uploader
+   - View existing documents in the main panel
+   - Delete unwanted documents with the delete buttons
+
+4. **Configure Settings**:
+   - Select your preferred embedding model from the sidebar
+   - View knowledge base statistics
+
+### 🔒 Security Considerations
+
+For production use, consider:
+- Changing default admin credentials
+- Using environment variables for sensitive configuration
+- Implementing proper session management
+- Adding HTTPS support
+- Restricting network access to admin interface
+
+### 📝 Notes
+
+- The admin interface operates independently of the main TreeLine application
+- After uploading or deleting files, the AI agent will need to be restarted to reload the knowledge base
+- Vector store updates are handled separately by the AI agent service
+- The interface runs on port 8502 to avoid conflicts with the main Streamlit UI (port 8501)
+
 ## 📁 Project Structure
 
 ```
@@ -157,6 +240,19 @@ The `dev.sh` script provides convenient commands for development:
 ```
 
 ### Adding Knowledge Base Documents
+
+#### Method 1: Using the Admin Interface (Recommended)
+
+1. Start the admin interface:
+   ```bash
+   ./run_admin.sh
+   ```
+2. Open http://localhost:8502 in your browser
+3. Login with default credentials (username: `admin`, password: `admin123`)
+4. Use the file upload feature to add new documents
+5. Delete unwanted documents using the delete buttons
+
+#### Method 2: Manual File Addition
 
 1. Add your documents (`.txt`, `.md`, or `.json` files) to `ai_agent/data/knowledge_base/`
 2. Restart the AI agent service:
