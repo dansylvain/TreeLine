@@ -6,8 +6,6 @@
   - Add support for file types such as `.pdf`, `.docx`, etc.
 
 - **Admin Interface**
-  - View documents stored in the database.
-  - Add or delete documents.
   - Change the embedding model dynamically.
 
 - **Conversation Memory**
